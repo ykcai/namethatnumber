@@ -1,3 +1,8 @@
+#origin code source
+#Brownlee, J. (2016).
+#Handwritten Digit Recognition using Convolutional Neural Networks in Python with Keras.
+#[online] Machine Learning Mastery.
+#Available at: https://machinelearningmastery.com/handwritten-digit-recognition-using-convolutional-neural-networks-python-keras/ [Accessed 26 May 2018].
 import numpy
 from keras.datasets import mnist
 from keras.models import Sequential
@@ -32,9 +37,9 @@ y_test = np_utils.to_categorical(y_test)
 num_classes = y_test.shape[1]
 features = input("Number of features for each layer: ")
 learningRate = input("Learning rate of optimizer: ")
-layers = 3;
+layers = '3';
 	#Change the numner of hidden layers before you run if things changed
-print("\n=====Training model with " + features + "input features, " + layers + " hidden layers, and learningRate = " + learningRate + "=====\n")
+print("\n=====Training model with " + features + " input features, " + layers + " hidden layers, and learningRate = " + learningRate + "=====\n")
 def baseline_model():
 	# create model
 	model = Sequential()
@@ -43,6 +48,7 @@ def baseline_model():
 		#remove this layer to get 2 layers
 	model.add(Conv2D(int(features), (3, 3), activation='relu'))
 	model.add(Flatten())
+		# add another convolutional layer with dropout and pooling for higher accuracy maybe
 		#remove this layer to get 1 layer
 	model.add(Dense(int(features), activation='relu'))
     	#output layer 10 neurons for 10 classes and a softmax activation function
@@ -62,7 +68,7 @@ model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=10, batch_s
 scores = model.evaluate(X_test, y_test, verbose=0)
 print("CNN Error: %.2f%%" % (100-scores[1]*100))
 	#Change the numner of hidden layers before you run if things changed
-print("\n=====Training model with " + features + "input features, " + layers + " hidden layers, and learningRate = " + learningRate + "=====\n")
+print("\n=====Training model with " + features + " input features, " + layers + " hidden layers, and learningRate = " + learningRate + "=====\n")
 
 # serialize model to JSON
 # model_json = model.to_json()
