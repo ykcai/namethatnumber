@@ -7,6 +7,8 @@ from keras.layers import Flatten
 from keras.layers.convolutional import Conv2D
 from keras.layers.convolutional import MaxPooling2D
 from keras.utils import np_utils
+from keras import optimizers
+
 from keras import backend as K
 K.set_image_dim_ordering('th')
 
@@ -26,27 +28,24 @@ X_test = X_test / 255
 # one hot encode outputs
 y_train = np_utils.to_categorical(y_train)
 y_test = np_utils.to_categorical(y_test)
+# 10 classes (0-9 numbers)
 num_classes = y_test.shape[1]
-
+print("\n=====Training model with 5 features, 3 hidden layers, and learningRate = 0.001=====\n")
 def baseline_model():
 	# create model
 	model = Sequential()
-        #32 feature maps that are 5x5 and a rectifier ativation function
-	model.add(Conv2D(32, (5, 5), input_shape=(1, 28, 28), activation='relu'))
-	#pooling layer configured with a size of 2x2
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        #Dropout layer that randomly excludes 20% of the neurons in the layer 
-        #used to reduce overfitting
-	model.add(Dropout(0.2))
-        #flatten layer that will convert 2D matrix data to a vector called flatten
+    	#first argument of Conv2D is the # feature maps that are 5x5 and a rectifier ativation function
+	model.add(Conv2D(2, (5, 5), input_shape=(1, 28, 28), activation='relu'))
+	model.add(Conv2D(2, (3, 3), activation='relu'))
 	model.add(Flatten())
-        #a fully connected layer with 128 neurons and rectifier activation  
-	model.add(Dense(128, activation='relu'))
-        #output layer 10 neurons for 10 classes and a softmax activation function 
-        #to ouput a probablity-like prediction for each class
+	model.add(Dense(2, activation='relu'))
+    	#output layer 10 neurons for 10 classes and a softmax activation function
+    	#to ouput a probablity-like prediction for each class
 	model.add(Dense(num_classes, activation='softmax'))
-	# Compile model
-	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+		# Compile model
+		# CHANGE LR (LEARNING RATE)
+	customOp = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+	model.compile(loss='categorical_crossentropy', optimizer=customOp, metrics=['accuracy'])
 	return model
 
 # build the model
@@ -58,9 +57,9 @@ scores = model.evaluate(X_test, y_test, verbose=0)
 print("CNN Error: %.2f%%" % (100-scores[1]*100))
 
 # serialize model to JSON
-model_json = model.to_json()
-with open("model.json", "w") as json_file:
-    json_file.write(model_json)
-# serialize weights to HDF5
-model.save_weights("model.h5")
-print("Saved model to disk")
+# model_json = model.to_json()
+# with open("model.json", "w") as json_file:
+#     json_file.write(model_json)
+# # serialize weights to HDF5
+# model.save_weights("model.h5")
+# print("Saved model to disk")
